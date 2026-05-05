@@ -15,21 +15,21 @@ A complete e-commerce shopping cart and order management application built with 
 
 ### Backend API
 
-- ✅ Add/Update/Remove items from cart
-- ✅ Apply coupon codes (fixed discount)
-- ✅ Get cart with computed totals
-- ✅ Place order from cart
-- ✅ Get order details
-- ✅ Business rules enforcement (max 10 units, cart validation, etc.)
+-  Add/Update/Remove items from cart
+-  Apply coupon codes (fixed discount)
+-  Get cart with computed totals
+-  Place order from cart
+-  Get order details
+-  Business rules enforcement (max 10 units, cart validation, etc.)
 
 ### Frontend Components
 
-- ✅ Product showcase with add to cart
-- ✅ Shopping cart sidebar with quantity controls
-- ✅ Coupon input and application
-- ✅ Checkout button with order confirmation
-- ✅ Responsive design with Tailwind CSS
-- ✅ Error handling and user feedback
+-  Product showcase with add to cart
+-  Shopping cart sidebar with quantity controls
+-  Coupon input and application
+-  Checkout button with order confirmation
+-  Responsive design with Tailwind CSS
+-  Error handling and user feedback
 
 ### Business Rules
 
@@ -151,16 +151,16 @@ npm run test:coverage # Coverage report
 
 ## Features & Requirements Met
 
-✅ All functional requirements (FR-01 to FR-15)
-✅ All business rules (BR-01 to BR-05)
-✅ Full TDD coverage (70%+ tests)
-✅ Responsive UI with Tailwind CSS
-✅ Error handling and validation
-✅ Session-based cart management
-✅ Order confirmation flow
-✅ Component-based React architecture
-✅ RESTful API design
-✅ Coupon system with discount logic
+ All functional requirements (FR-01 to FR-15)
+ All business rules (BR-01 to BR-05)
+ Full TDD coverage (70%+ tests)
+ Responsive UI with Tailwind CSS
+ Error handling and validation
+ Session-based cart management
+ Order confirmation flow
+ Component-based React architecture
+ RESTful API design
+ Coupon system with discount logic
 
 ## Future Enhancements (Post-POC)
 
