@@ -138,7 +138,7 @@ function App() {
       <header className="bg-gray-900 border-b border-gray-700 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
           <h1 className="text-3xl font-bold text-white flex items-center gap-2">
-            🛒 ShopHub
+            🛒 NiveshHub
           </h1>
           <p className="text-gray-400 text-sm mt-1">E-Commerce Shopping Cart & Order Management</p>
         </div>
@@ -207,8 +207,8 @@ function App() {
 
       {/* Footer */}
       <footer className="bg-gray-900 border-t border-gray-700 mt-12 py-6">
-        <div className="max-w-7xl mx-auto px-4 text-center text-gray-400">
-          <p>© 2024 ShopHub E-Commerce Platform. All rights reserved.</p>
+        <div className="max-w-5xl mx-auto px-2 text-center text-gray-500">
+          <p>© 2026 NiveshHub E-Commerce Platform. All rights reserved.</p>
           <p className="text-xs mt-2">Session ID: <span className="font-mono">{sessionId.substring(0, 8)}...</span></p>
         </div>
       </footer>
