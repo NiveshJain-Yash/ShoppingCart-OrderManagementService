@@ -48,12 +48,10 @@ function App() {
   };
 
   const handleUpdateQuantity = async (itemId, newQty) => {
-    if (newQty < 0) return;
+    if (newQty < 1) return;  // block going below 1 — use remove button to delete
     setIsLoading(true);
     try {
-      const res = newQty === 0
-        ? await cartApi.removeItem(sessionId, itemId)
-        : await cartApi.updateItem(sessionId, itemId, newQty);
+      const res = await cartApi.updateItem(sessionId, itemId, newQty);
       setCart(res.data);
       setError('');
     } catch (err) {

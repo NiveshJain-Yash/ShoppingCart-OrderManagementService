@@ -28,7 +28,7 @@ export function CartSidebar({ items, subtotal, discount, total, onUpdateQuantity
             <div className="flex items-center gap-2">
               <button
                 onClick={() => onUpdateQuantity(item.itemId, item.quantity - 1)}
-                disabled={isLoading}
+                disabled={item.quantity <= 1 || isLoading}
                 className="w-8 h-8 flex items-center justify-center bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition font-bold"
               >
                 −

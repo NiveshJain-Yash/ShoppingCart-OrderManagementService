@@ -7,7 +7,7 @@ const carts = new Map();
 const validCoupons = {
   SAVE50: { discount: 50, description: 'Rs.50 off' },
   SAVE100: { discount: 100, description: 'Rs.100 off' },
-  SAVE25: { discount: 25, description: 'Rs.25 off' },
+  SAVE200: { discount: 200, description: 'Rs.200 off' },
 };
 
 // Business Rules Constants
