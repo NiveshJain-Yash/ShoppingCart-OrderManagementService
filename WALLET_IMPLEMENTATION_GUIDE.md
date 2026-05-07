@@ -1,6 +1,7 @@
 # 💳 Wallet Functionality - Implementation Approach
 
 ## Table of Contents
+
 1. [Architecture Overview](#architecture-overview)
 2. [System Design](#system-design)
 3. [Frontend Structure](#frontend-structure)
@@ -14,6 +15,7 @@
 ## ARCHITECTURE OVERVIEW
 
 ### Current System
+
 ```
 User → Product Selection → Add to Cart → Checkout → Order
                                            ↓
@@ -22,6 +24,7 @@ User → Product Selection → Add to Cart → Checkout → Order
 ```
 
 ### With Wallet Feature
+
 ```
 User → Wallet Management ─→ Check Balance
               ↓
@@ -45,13 +48,13 @@ User → Wallet Management ─→ Check Balance
 
 A **digital wallet** stores user's money that can be used for purchases:
 
-| Aspect | Details |
-|--------|---------|
-| **Balance** | Amount of money stored in wallet |
-| **Add Money** | User can add funds (recharge) |
-| **Use Money** | Pay from wallet during checkout |
-| **Transaction History** | Track all credits/debits |
-| **Account Link** | Tied to user account |
+| Aspect                  | Details                          |
+| ----------------------- | -------------------------------- |
+| **Balance**             | Amount of money stored in wallet |
+| **Add Money**           | User can add funds (recharge)    |
+| **Use Money**           | Pay from wallet during checkout  |
+| **Transaction History** | Track all credits/debits         |
+| **Account Link**        | Tied to user account             |
 
 ### Wallet States
 
@@ -127,6 +130,7 @@ frontend/
 ## COMPONENT ARCHITECTURE
 
 ### 1. WalletDisplay Component
+
 ```jsx
 // Shown in Header or Sidebar
 // Purpose: Quick wallet balance view
@@ -144,6 +148,7 @@ Renders:
 **Use Case**: User sees wallet balance in header at all times
 
 ### 2. WalletModal Component
+
 ```jsx
 // Popup/Modal showing wallet details
 // Purpose: Central hub for wallet management
@@ -166,6 +171,7 @@ Contains:
 **Use Case**: User opens wallet to see detailed info
 
 ### 3. RechargeForm Component
+
 ```jsx
 // Form to add money to wallet
 // Purpose: Accept payment for recharge
@@ -195,6 +201,7 @@ Flow:
 **Use Case**: User adds money to wallet before shopping
 
 ### 4. TransactionHistory Component
+
 ```jsx
 // List of all wallet transactions
 // Purpose: Transparent transaction log
@@ -218,7 +225,7 @@ Example Transaction:
   │ 2026-05-08 14:30                │
   │ Balance: ₹6,000                 │
   └─────────────────────────────────┘
-  
+
   ┌─────────────────────────────────┐
   │ -₹99 | Debit                    │
   │ Order #ORDER123                 │
@@ -230,6 +237,7 @@ Example Transaction:
 **Use Case**: User checks transaction history
 
 ### 5. WalletPaymentOption Component
+
 ```jsx
 // Radio button/Card option in checkout
 // Purpose: Select wallet as payment method
@@ -252,6 +260,7 @@ Disabled if: balance < orderTotal
 **Use Case**: User chooses wallet payment during checkout
 
 ### 6. PaymentMethodSelector Component
+
 ```jsx
 // NEW CHECKOUT STEP
 // Purpose: Choose between payment methods
@@ -274,6 +283,7 @@ Logic:
 **Use Case**: User selects payment method before final checkout
 
 ### 7. WalletPage Component
+
 ```jsx
 // Full page dedicated to wallet
 // Purpose: Comprehensive wallet management
@@ -312,6 +322,7 @@ Layout:
 ## STATE MANAGEMENT
 
 ### Option 1: App.jsx (Simple)
+
 ```jsx
 // Add wallet state to existing App.jsx
 
@@ -319,17 +330,18 @@ const [wallet, setWallet] = useState({
   balance: 0,
   totalAdded: 0,
   totalSpent: 0,
-  lastUpdated: null
+  lastUpdated: null,
 });
 
 const [walletLoading, setWalletLoading] = useState(false);
-const [walletError, setWalletError] = useState('');
+const [walletError, setWalletError] = useState("");
 ```
 
 **Pros**: Simple, no extra setup
 **Cons**: Props drilling through many components
 
 ### Option 2: useWallet Hook (Recommended)
+
 ```jsx
 // Custom hook for wallet logic
 
@@ -374,6 +386,7 @@ const { wallet, addMoney, loading } = useWallet();
 **Cons**: Slightly more setup
 
 ### Option 3: Context API (Full-Scale)
+
 ```jsx
 // Context for app-wide wallet state
 
@@ -382,7 +395,7 @@ export const WalletContext = createContext();
 
 export function WalletProvider({ children }) {
   const [wallet, setWallet] = useState({...});
-  
+
   const value = {
     wallet,
     addMoney: async (amount) => {...},
@@ -418,40 +431,39 @@ const { wallet, addMoney } = useContext(WalletContext);
 ### services/walletService.js
 
 ```javascript
-import axios from 'axios';
+import axios from "axios";
 
-const API_BASE = '/api/v1';
+const API_BASE = "/api/v1";
 
 export const walletApi = {
   // Get wallet details
-  getWallet: (userId) => 
-    axios.get(`${API_BASE}/wallet/${userId}`),
+  getWallet: (userId) => axios.get(`${API_BASE}/wallet/${userId}`),
 
   // Add money to wallet
-  addMoney: (userId, amount, paymentMethod) => 
+  addMoney: (userId, amount, paymentMethod) =>
     axios.post(`${API_BASE}/wallet/${userId}/recharge`, {
       amount,
       paymentMethod,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }),
 
   // Use wallet for payment
-  useWalletForPayment: (userId, orderId, amount) => 
+  useWalletForPayment: (userId, orderId, amount) =>
     axios.post(`${API_BASE}/wallet/${userId}/payment`, {
       orderId,
       amount,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }),
 
   // Get transaction history
-  getTransactionHistory: (userId, limit = 50) => 
+  getTransactionHistory: (userId, limit = 50) =>
     axios.get(`${API_BASE}/wallet/${userId}/transactions`, {
-      params: { limit }
+      params: { limit },
     }),
 
   // Get transaction filters (optional)
   getTransactionStats: (userId) =>
-    axios.get(`${API_BASE}/wallet/${userId}/stats`)
+    axios.get(`${API_BASE}/wallet/${userId}/stats`),
 };
 ```
 
@@ -459,7 +471,7 @@ export const walletApi = {
 
 ```javascript
 // Add to existing api.js
-import { walletApi } from './services/walletService.js';
+import { walletApi } from "./services/walletService.js";
 
 // Export both cart and wallet APIs
 export { cartApi, orderApi, walletApi };
@@ -472,6 +484,7 @@ export { cartApi, orderApi, walletApi };
 ### Database Schema
 
 **wallets table**:
+
 ```sql
 CREATE TABLE wallets (
   id UUID PRIMARY KEY,
@@ -487,6 +500,7 @@ CREATE TABLE wallets (
 ```
 
 **transactions table**:
+
 ```sql
 CREATE TABLE wallet_transactions (
   id UUID PRIMARY KEY,
@@ -505,35 +519,37 @@ CREATE TABLE wallet_transactions (
 
 ### API Endpoints Needed
 
-| Endpoint | Method | Purpose |
-|----------|--------|---------|
-| `/api/v1/wallet/:userId` | GET | Get wallet balance |
-| `/api/v1/wallet/:userId/recharge` | POST | Add money |
-| `/api/v1/wallet/:userId/payment` | POST | Pay from wallet |
-| `/api/v1/wallet/:userId/transactions` | GET | Get history |
-| `/api/v1/wallet/:userId/stats` | GET | Get statistics |
+| Endpoint                              | Method | Purpose            |
+| ------------------------------------- | ------ | ------------------ |
+| `/api/v1/wallet/:userId`              | GET    | Get wallet balance |
+| `/api/v1/wallet/:userId/recharge`     | POST   | Add money          |
+| `/api/v1/wallet/:userId/payment`      | POST   | Pay from wallet    |
+| `/api/v1/wallet/:userId/transactions` | GET    | Get history        |
+| `/api/v1/wallet/:userId/stats`        | GET    | Get statistics     |
 
 ### Example Response Objects
 
 **GET /wallet/:userId**:
+
 ```json
 {
   "id": "wallet-123",
   "userId": "user-456",
-  "balance": 5000.00,
-  "totalAdded": 15000.00,
-  "totalSpent": 10000.00,
+  "balance": 5000.0,
+  "totalAdded": 15000.0,
+  "totalSpent": 10000.0,
   "status": "ACTIVE",
   "lastUpdated": "2026-05-08T10:30:00Z"
 }
 ```
 
 **POST /wallet/:userId/recharge**:
+
 ```json
 {
   "success": true,
   "message": "₹1000 added successfully",
-  "newBalance": 6000.00,
+  "newBalance": 6000.0,
   "transactionId": "txn-789",
   "transaction": {
     "id": "txn-789",
@@ -546,6 +562,7 @@ CREATE TABLE wallet_transactions (
 ```
 
 **GET /wallet/:userId/transactions**:
+
 ```json
 {
   "transactions": [
@@ -601,12 +618,12 @@ New Flow:
 
 ```jsx
 // Current
-export function CheckoutButton({ 
-  isCartEmpty, 
-  onCheckout, 
-  isLoading, 
-  orderId, 
-  error 
+export function CheckoutButton({
+  isCartEmpty,
+  onCheckout,
+  isLoading,
+  orderId,
+  error,
 }) {
   // ...
 }
@@ -618,9 +635,9 @@ export function CheckoutButton({
   isLoading,
   orderId,
   error,
-  paymentMethod,        // NEW
-  walletBalance,        // NEW
-  orderTotal           // NEW
+  paymentMethod, // NEW
+  walletBalance, // NEW
+  orderTotal, // NEW
 }) {
   // Validation: if paymentMethod is 'WALLET', check walletBalance >= orderTotal
   // ...
@@ -661,7 +678,7 @@ Step 4: PROCESS & ORDER CONFIRMATION
 ```jsx
 // Add wallet state
 const [wallet, setWallet] = useState(null);
-const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('WALLET');
+const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("WALLET");
 
 // Add handlers
 const handleSelectPaymentMethod = (method) => {
@@ -669,35 +686,35 @@ const handleSelectPaymentMethod = (method) => {
 };
 
 const handleCheckoutWithPayment = async () => {
-  if (selectedPaymentMethod === 'WALLET') {
+  if (selectedPaymentMethod === "WALLET") {
     // Check wallet balance
     if (wallet.balance < cart.total) {
-      setError('Insufficient wallet balance');
+      setError("Insufficient wallet balance");
       return;
     }
-    
+
     // Deduct from wallet
     const res = await walletApi.useWalletForPayment(
       sessionId,
       orderId,
-      cart.total
+      cart.total,
     );
-    
+
     // Update wallet
     setWallet(res.data.wallet);
   }
-  
+
   // Create order
   await handleCheckout();
 };
 
 // Pass to components
-<CheckoutButton 
+<CheckoutButton
   paymentMethod={selectedPaymentMethod}
   walletBalance={wallet?.balance}
   orderTotal={cart.total}
   onSelectPaymentMethod={handleSelectPaymentMethod}
-/>
+/>;
 ```
 
 ---
@@ -803,6 +820,7 @@ const handleCheckoutWithPayment = async () => {
 ### Phase 1: Foundation (Week 1)
 
 **Backend**:
+
 - [ ] Create wallet & transactions tables
 - [ ] Implement wallet service
 - [ ] Create endpoints: GET /wallet, POST /wallet/recharge
@@ -810,12 +828,14 @@ const handleCheckoutWithPayment = async () => {
 - [ ] Write tests
 
 **Frontend**:
+
 - [ ] Create WalletDisplay component
 - [ ] Create RechargeForm component
 - [ ] Create useWallet hook
 - [ ] Create walletService.js
 
 **Integration**:
+
 - [ ] Add wallet state to App.jsx
 - [ ] Display wallet balance in Header
 - [ ] Add wallet icon/badge
@@ -823,6 +843,7 @@ const handleCheckoutWithPayment = async () => {
 ### Phase 2: UI Components (Week 2)
 
 **Frontend**:
+
 - [ ] Create WalletModal component
 - [ ] Create TransactionHistory component
 - [ ] Create PaymentMethodSelector component
@@ -830,23 +851,27 @@ const handleCheckoutWithPayment = async () => {
 - [ ] Style all components with Tailwind
 
 **Integration**:
+
 - [ ] Add routes: /wallet
 - [ ] Update navigation links
 
 ### Phase 3: Checkout Integration (Week 3)
 
 **Frontend**:
+
 - [ ] Create PaymentMethodSelector component
 - [ ] Update CheckoutButton to handle payment methods
 - [ ] Update CartPage checkout flow
 - [ ] Update success modal for wallet payments
 
 **Backend**:
+
 - [ ] Update order creation to handle paymentMethod
 - [ ] Integrate wallet deduction with order placement
 - [ ] Add transaction logging
 
 **Integration**:
+
 - [ ] Update App.jsx handleCheckout() flow
 - [ ] Connect all payment endpoints
 - [ ] Test complete flow
@@ -854,12 +879,14 @@ const handleCheckoutWithPayment = async () => {
 ### Phase 4: Polish & Testing (Week 4)
 
 **Testing**:
+
 - [ ] Unit tests for wallet service
 - [ ] Integration tests for checkout
 - [ ] Component tests
 - [ ] E2E tests
 
 **Polish**:
+
 - [ ] Add animations
 - [ ] Error handling improvements
 - [ ] Loading states
@@ -869,15 +896,15 @@ const handleCheckoutWithPayment = async () => {
 
 ## RECOMMENDED TECH STACK
 
-| Purpose | Technology |
-|---------|-----------|
-| State Management | useWallet hook OR Context API |
-| API Calls | Axios (existing) |
-| Styling | Tailwind CSS (existing) |
-| Modals | React component OR headless-ui |
-| Forms | React hooks |
-| Charts (optional) | Chart.js or Recharts |
-| Testing | Vitest + React Testing Library (existing) |
+| Purpose           | Technology                                |
+| ----------------- | ----------------------------------------- |
+| State Management  | useWallet hook OR Context API             |
+| API Calls         | Axios (existing)                          |
+| Styling           | Tailwind CSS (existing)                   |
+| Modals            | React component OR headless-ui            |
+| Forms             | React hooks                               |
+| Charts (optional) | Chart.js or Recharts                      |
+| Testing           | Vitest + React Testing Library (existing) |
 
 ---
 
@@ -909,28 +936,28 @@ const handleCheckoutWithPayment = async () => {
 
 ```javascript
 // walletRoutes.js
-router.post('/:userId/payment', (req, res) => {
+router.post("/:userId/payment", (req, res) => {
   const { userId } = req.params;
   const { orderId, amount } = req.body;
-  
+
   // Validate user owns this wallet
   if (!isValidUser(userId)) {
-    return res.status(403).json({ error: 'Unauthorized' });
+    return res.status(403).json({ error: "Unauthorized" });
   }
-  
+
   // Get wallet
   const wallet = getWallet(userId);
-  
+
   // Validate balance ON BACKEND
   if (wallet.balance < amount) {
-    return res.status(422).json({ error: 'Insufficient balance' });
+    return res.status(422).json({ error: "Insufficient balance" });
   }
-  
+
   // Check for duplicate transactions (idempotency)
   if (hasDuplicateTransaction(orderId)) {
-    return res.status(400).json({ error: 'Duplicate transaction' });
+    return res.status(400).json({ error: "Duplicate transaction" });
   }
-  
+
   // Use database transaction
   try {
     deductWallet(userId, amount);
@@ -939,7 +966,7 @@ router.post('/:userId/payment', (req, res) => {
     return res.json({ success: true });
   } catch (error) {
     // Rollback on error
-    return res.status(500).json({ error: 'Transaction failed' });
+    return res.status(500).json({ error: "Transaction failed" });
   }
 });
 ```
@@ -988,18 +1015,18 @@ router.post('/:userId/payment', (req, res) => {
 
 ## SUMMARY TABLE
 
-| Aspect | What to Add |
-|--------|-----------|
-| **Components** | 7 new components + WalletPage |
-| **Hooks** | 1 useWallet custom hook |
-| **Services** | walletService.js |
-| **Routes** | /wallet page route |
-| **State** | wallet, selectedPaymentMethod |
-| **Handlers** | addMoney, useWallet, getHistory |
-| **Backend Endpoints** | 5 new endpoints |
-| **Database Tables** | 2 new tables (wallets, transactions) |
-| **Integration Points** | App.jsx, CartPage, CheckoutButton |
-| **New Features** | Payment method selection, transaction history, balance display |
+| Aspect                 | What to Add                                                    |
+| ---------------------- | -------------------------------------------------------------- |
+| **Components**         | 7 new components + WalletPage                                  |
+| **Hooks**              | 1 useWallet custom hook                                        |
+| **Services**           | walletService.js                                               |
+| **Routes**             | /wallet page route                                             |
+| **State**              | wallet, selectedPaymentMethod                                  |
+| **Handlers**           | addMoney, useWallet, getHistory                                |
+| **Backend Endpoints**  | 5 new endpoints                                                |
+| **Database Tables**    | 2 new tables (wallets, transactions)                           |
+| **Integration Points** | App.jsx, CartPage, CheckoutButton                              |
+| **New Features**       | Payment method selection, transaction history, balance display |
 
 ---
 
@@ -1008,22 +1035,22 @@ router.post('/:userId/payment', (req, res) => {
 ### useWallet.js (Custom Hook)
 
 ```jsx
-import { useState } from 'react';
-import { walletApi } from '../services/walletService.js';
+import { useState } from "react";
+import { walletApi } from "../services/walletService.js";
 
 export function useWallet(userId) {
   const [wallet, setWallet] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const fetchWallet = async () => {
     setLoading(true);
     try {
       const res = await walletApi.getWallet(userId);
       setWallet(res.data);
-      setError('');
+      setError("");
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to fetch wallet');
+      setError(err.response?.data?.error || "Failed to fetch wallet");
     } finally {
       setLoading(false);
     }
@@ -1034,10 +1061,10 @@ export function useWallet(userId) {
     try {
       const res = await walletApi.addMoney(userId, amount, method);
       setWallet(res.data.wallet);
-      setError('');
+      setError("");
       return res.data;
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to add money');
+      setError(err.response?.data?.error || "Failed to add money");
       throw err;
     } finally {
       setLoading(false);
@@ -1049,10 +1076,10 @@ export function useWallet(userId) {
     try {
       const res = await walletApi.useWalletForPayment(userId, orderId, amount);
       setWallet(res.data.wallet);
-      setError('');
+      setError("");
       return res.data;
     } catch (err) {
-      setError(err.response?.data?.error || 'Payment failed');
+      setError(err.response?.data?.error || "Payment failed");
       throw err;
     } finally {
       setLoading(false);
@@ -1063,10 +1090,10 @@ export function useWallet(userId) {
     setLoading(true);
     try {
       const res = await walletApi.getTransactionHistory(userId);
-      setError('');
+      setError("");
       return res.data.transactions;
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to load history');
+      setError(err.response?.data?.error || "Failed to load history");
       return [];
     } finally {
       setLoading(false);
@@ -1080,7 +1107,7 @@ export function useWallet(userId) {
     fetchWallet,
     addMoney,
     useWalletForPayment,
-    getTransactionHistory
+    getTransactionHistory,
   };
 }
 ```
@@ -1088,7 +1115,7 @@ export function useWallet(userId) {
 ### WalletDisplay.jsx (Component)
 
 ```jsx
-import React from 'react';
+import React from "react";
 
 export function WalletDisplay({ balance, loading, onClick }) {
   return (
@@ -1100,7 +1127,7 @@ export function WalletDisplay({ balance, loading, onClick }) {
       <div className="text-left">
         <p className="text-xs opacity-80">Wallet</p>
         <p className="font-semibold">
-          {loading ? 'Loading...' : `₹${(balance || 0).toLocaleString()}`}
+          {loading ? "Loading..." : `₹${(balance || 0).toLocaleString()}`}
         </p>
       </div>
     </button>
