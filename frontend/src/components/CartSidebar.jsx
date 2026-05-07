@@ -1,70 +1,77 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-export function CartSidebar({ 
-  items, 
-  subtotal, 
-  discount, 
-  total, 
-  onUpdateQuantity, 
-  onRemoveItem, 
-  isLoading 
-}) {
+export function CartSidebar({ items, subtotal, discount, total, onUpdateQuantity, onRemoveItem, isLoading }) {
+  if (items.length === 0) {
+    return (
+      <div className="bg-gray-800 border border-gray-700 rounded-xl p-12 text-center">
+        <div className="text-5xl mb-4">🛒</div>
+        <p className="text-gray-400 text-lg font-medium">Your cart is empty</p>
+        <p className="text-gray-600 text-sm mt-1">Add some products to get started</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-      <h2 className="text-2xl font-bold mb-4 text-gray-900">Shopping Cart</h2>
-      
-      {items.length === 0 ? (
-        <p className="text-gray-500 text-center py-8">Your cart is empty</p>
-      ) : (
-        <div className="space-y-4 mb-6">
-          {items.map((item) => (
-            <div key={item.itemId} className="flex items-center justify-between bg-white p-4 rounded-lg border border-gray-100">
-              <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                <p className="text-sm text-gray-600">₹{item.price.toLocaleString()}</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => onUpdateQuantity(item.itemId, item.quantity - 1)}
-                  disabled={isLoading}
-                  className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 transition"
-                >
-                  −
-                </button>
-                <span className="w-8 text-center font-semibold">{item.quantity}</span>
-                <button
-                  onClick={() => onUpdateQuantity(item.itemId, item.quantity + 1)}
-                  disabled={item.quantity >= 10 || isLoading}
-                  className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 transition"
-                >
-                  +
-                </button>
-                <button
-                  onClick={() => onRemoveItem(item.itemId)}
-                  disabled={isLoading}
-                  className="px-3 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 disabled:opacity-50 transition ml-2"
-                >
-                  ✕
-                </button>
-              </div>
+    <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
+      <div className="px-6 py-4 border-b border-gray-700">
+        <h2 className="text-lg font-semibold text-white">Cart Items ({items.length})</h2>
+      </div>
+
+      <div className="divide-y divide-gray-700">
+        {items.map((item) => (
+          <div key={item.itemId} className="flex items-center gap-4 px-6 py-4">
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-white truncate">{item.name}</p>
+              <p className="text-sm text-gray-400">₹{item.price.toLocaleString()} each</p>
             </div>
-          ))}
-        </div>
-      )}
-      
-      <div className="border-t border-gray-200 pt-4 space-y-2">
-        <div className="flex justify-between text-gray-700">
-          <span>Subtotal:</span>
-          <span className="font-semibold">₹{subtotal.toLocaleString()}</span>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => onUpdateQuantity(item.itemId, item.quantity - 1)}
+                disabled={isLoading}
+                className="w-8 h-8 flex items-center justify-center bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition font-bold"
+              >
+                −
+              </button>
+              <span className="w-8 text-center text-white font-semibold">{item.quantity}</span>
+              <button
+                onClick={() => onUpdateQuantity(item.itemId, item.quantity + 1)}
+                disabled={item.quantity >= 10 || isLoading}
+                className="w-8 h-8 flex items-center justify-center bg-gray-700 text-white rounded-lg hover:bg-gray-600 disabled:opacity-50 transition font-bold"
+              >
+                +
+              </button>
+            </div>
+
+            <p className="text-white font-semibold w-24 text-right">
+              ₹{(item.price * item.quantity).toLocaleString()}
+            </p>
+
+            <button
+              onClick={() => onRemoveItem(item.itemId)}
+              disabled={isLoading}
+              className="text-gray-500 hover:text-red-400 disabled:opacity-50 transition ml-2"
+              title="Remove item"
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <div className="px-6 py-4 bg-gray-900/50 border-t border-gray-700 space-y-2">
+        <div className="flex justify-between text-gray-400 text-sm">
+          <span>Subtotal</span>
+          <span>₹{subtotal.toLocaleString()}</span>
         </div>
         {discount > 0 && (
-          <div className="flex justify-between text-green-600">
-            <span>Discount:</span>
-            <span className="font-semibold">-₹{discount.toLocaleString()}</span>
+          <div className="flex justify-between text-green-400 text-sm">
+            <span>Discount</span>
+            <span>-₹{discount.toLocaleString()}</span>
           </div>
         )}
-        <div className="flex justify-between text-lg font-bold text-gray-900 pt-2">
-          <span>Total:</span>
+        <div className="flex justify-between text-white font-bold text-base pt-2 border-t border-gray-700">
+          <span>Total</span>
           <span>₹{total.toLocaleString()}</span>
         </div>
       </div>

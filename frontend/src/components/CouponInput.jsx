@@ -2,68 +2,56 @@ import React, { useState } from 'react';
 
 export function CouponInput({ onApplyCoupon, isLoading, appliedCoupon, error }) {
   const [code, setCode] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
 
   const handleApply = async (e) => {
     e.preventDefault();
     if (!code.trim()) return;
-    
     const appliedCode = code;
-    setSuccessMessage('');
-    await onApplyCoupon(appliedCode);
     setCode('');
-    if (!error) {
-      setSuccessMessage(`Coupon "${appliedCode}" applied successfully!`);
-      setTimeout(() => setSuccessMessage(''), 3000);
-    }
+    await onApplyCoupon(appliedCode);
   };
 
   return (
-    <div className="bg-white rounded-lg p-6 border border-gray-200">
-      <h3 className="text-lg font-semibold mb-4 text-gray-900">Apply Coupon</h3>
-      
-      <form onSubmit={handleApply} className="space-y-3">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
-            placeholder="Enter coupon code"
-            disabled={isLoading || appliedCoupon}
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
-          />
-          <button
-            type="submit"
-            disabled={isLoading || appliedCoupon || !code.trim()}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium"
-          >
-            Apply
-          </button>
+    <div className="bg-gray-800 border border-gray-700 rounded-xl p-5">
+      <h3 className="font-semibold text-white mb-3">Apply Coupon</h3>
+
+      {appliedCoupon ? (
+        <div className="flex items-center gap-2 p-3 bg-green-900/40 border border-green-700 rounded-lg">
+          <span className="text-green-400 text-lg">✓</span>
+          <div>
+            <p className="text-green-300 text-sm font-semibold">Coupon applied!</p>
+            <p className="text-green-500 text-xs font-mono">{appliedCoupon}</p>
+          </div>
         </div>
-
-        {successMessage && (
-          <div className="p-3 bg-green-50 text-green-700 rounded-lg text-sm">
-            ✓ {successMessage}
+      ) : (
+        <form onSubmit={handleApply} className="space-y-2">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value.toUpperCase())}
+              placeholder="Enter coupon code"
+              disabled={isLoading}
+              className="flex-1 px-3 py-2 bg-gray-900 border border-gray-600 text-white placeholder-gray-500 rounded-lg text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
+            />
+            <button
+              type="submit"
+              disabled={isLoading || !code.trim()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 disabled:opacity-50 transition text-sm font-medium"
+            >
+              Apply
+            </button>
           </div>
-        )}
-
-        {appliedCoupon && (
-          <div className="p-3 bg-blue-50 text-blue-700 rounded-lg text-sm">
-            ✓ Coupon "{appliedCoupon}" is applied
-          </div>
-        )}
-
-        {error && (
-          <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm">
-            ✕ {error}
-          </div>
-        )}
-
-        <div className="text-xs text-gray-600 pt-2">
-          <p className="font-semibold mb-1">Available codes:</p>
-          <p>• SAVE50 (₹50 off) • SAVE100 (₹100 off) • SAVE25 (₹25 off)</p>
-        </div>
-      </form>
+          {error && (
+            <p className="text-red-400 text-xs flex items-center gap-1">
+              <span>✕</span> {error}
+            </p>
+          )}
+          <p className="text-gray-600 text-xs">
+            Available: <span className="font-mono text-gray-500">SAVE50 · SAVE100 · SAVE200</span>
+          </p>
+        </form>
+      )}
     </div>
   );
 }
